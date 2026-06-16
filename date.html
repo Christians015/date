@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Date Night 💕</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --plum:#1a0a1e;--plum-mid:#2d1535;--blush:#f2c4d4;
+  --mauve:#e8a0bc;--soft-white:#fff0f5;--violet:#9b6b8a;--accent:#f7a8c4;
+}
+html,body{height:100%;background:var(--plum);color:var(--soft-white);font-family:'DM Sans',sans-serif;overflow:hidden}
+.stars{position:fixed;inset:0;pointer-events:none;z-index:0}
+.star{position:absolute;background:white;border-radius:50%;animation:twinkle var(--dur) ease-in-out infinite alternate}
+@keyframes twinkle{from{opacity:var(--min-op);transform:scale(1)}to{opacity:var(--max-op);transform:scale(1.4)}}
+.app{position:relative;z-index:1;height:100dvh;display:flex;flex-direction:column;max-width:430px;margin:0 auto}
+.screen{display:none;flex-direction:column;flex:1;padding:0 28px 40px;overflow-y:auto}
+.screen.active{display:flex}
+
+/* SPLASH */
+#splash{align-items:center;justify-content:center;text-align:center;gap:28px}
+.heart-pulse{font-size:56px;animation:heartbeat 1.4s ease-in-out infinite;display:block;line-height:1}
+@keyframes heartbeat{0%,100%{transform:scale(1)}14%{transform:scale(1.15)}28%{transform:scale(1)}42%{transform:scale(1.1)}56%{transform:scale(1)}}
+.yesno-wrap{width:100%;display:flex;flex-direction:column;align-items:center;gap:14px;position:relative;min-height:130px}
+.btn-no{position:absolute;top:72px;background:transparent;border:1px solid rgba(232,160,188,0.25);border-radius:50px;color:var(--violet);font-family:'DM Sans',sans-serif;font-size:14px;padding:12px 32px;cursor:pointer;transition:top 0.05s,left 0.05s;user-select:none;-webkit-user-select:none;touch-action:none}
+
+/* INTRO */
+#intro{align-items:center;justify-content:center;text-align:center;gap:22px}
+.intro-eyebrow{font-weight:300;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--mauve)}
+.intro-title{font-family:'Playfair Display',serif;font-style:italic;font-size:36px;line-height:1.15;color:var(--soft-white)}
+.intro-sub{font-size:14px;line-height:1.7;color:var(--blush);max-width:300px;font-weight:300}
+.name-input-wrap{width:100%}
+.name-input{width:100%;background:rgba(242,196,212,0.08);border:1px solid rgba(232,160,188,0.3);border-radius:14px;padding:16px 20px;color:var(--soft-white);font-family:'DM Sans',sans-serif;font-size:15px;outline:none;text-align:center;transition:border-color 0.3s,background 0.3s}
+.name-input::placeholder{color:var(--violet)}
+.name-input:focus{border-color:var(--accent);background:rgba(242,196,212,0.13)}
+.name-error{font-size:13px;color:var(--accent);text-align:center;margin-top:8px;display:none}
+.name-error.visible{display:block}
+
+/* BUTTONS */
+.btn-primary{background:linear-gradient(135deg,#e8a0bc,#c96b96);color:white;border:none;border-radius:50px;padding:17px 44px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;letter-spacing:0.3px;transition:transform 0.15s,box-shadow 0.15s;box-shadow:0 8px 32px rgba(201,107,150,0.35);width:220px}
+.btn-primary:active{transform:scale(0.96)}
+.btn-ghost{background:transparent;color:var(--mauve);border:1px solid rgba(232,160,188,0.3);border-radius:50px;padding:13px 30px;font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer}
+
+/* QUIZ */
+#quiz{padding-top:20px;gap:0}
+.quiz-header{padding:20px 0 24px;position:sticky;top:0;background:linear-gradient(to bottom,var(--plum) 80%,transparent);z-index:10}
+.progress-track{height:3px;background:rgba(255,255,255,0.08);border-radius:10px;overflow:hidden;margin-bottom:16px}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--mauve),var(--accent));border-radius:10px;transition:width 0.5s cubic-bezier(0.4,0,0.2,1)}
+.quiz-meta{display:flex;justify-content:space-between;align-items:center}
+.q-count{font-size:12px;color:var(--violet);font-weight:300;letter-spacing:1px}
+.q-category{font-size:11px;color:var(--mauve);letter-spacing:2px;text-transform:uppercase;font-weight:500}
+.q-body{flex:1;display:flex;flex-direction:column;gap:28px;padding-top:8px}
+.q-text{font-family:'Playfair Display',serif;font-size:26px;line-height:1.3;color:var(--soft-white);animation:fadeUp 0.4s ease both}
+.q-hint{font-size:13px;color:var(--violet);font-weight:300;margin-top:-18px;animation:fadeUp 0.4s 0.05s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.choices{display:flex;flex-direction:column;gap:10px;animation:fadeUp 0.4s 0.1s ease both}
+.choice-btn{background:rgba(242,196,212,0.06);border:1px solid rgba(232,160,188,0.18);border-radius:14px;padding:16px 20px;color:var(--blush);font-family:'DM Sans',sans-serif;font-size:15px;text-align:left;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:12px}
+.choice-icon{font-size:20px;width:28px;text-align:center;flex-shrink:0}
+.choice-btn.selected{background:rgba(201,107,150,0.18);border-color:var(--accent);color:var(--soft-white);box-shadow:0 0 0 1px var(--accent)}
+.text-answer{background:rgba(242,196,212,0.06);border:1px solid rgba(232,160,188,0.18);border-radius:14px;padding:16px 20px;color:var(--soft-white);font-family:'DM Sans',sans-serif;font-size:15px;resize:none;outline:none;width:100%;min-height:100px;transition:border-color 0.3s;animation:fadeUp 0.4s 0.1s ease both;line-height:1.6}
+.text-answer:focus{border-color:rgba(247,168,196,0.5)}
+.text-answer::placeholder{color:var(--violet)}
+.scale-wrap{animation:fadeUp 0.4s 0.1s ease both}
+.scale-labels{display:flex;justify-content:space-between;font-size:12px;color:var(--violet);margin-bottom:10px;font-weight:300}
+.scale-dots{display:flex;justify-content:space-between;align-items:center}
+.scale-dot{width:36px;height:36px;border-radius:50%;border:1px solid rgba(232,160,188,0.25);background:rgba(242,196,212,0.05);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--violet);cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif}
+.scale-dot.selected{background:linear-gradient(135deg,#e8a0bc,#c96b96);border-color:transparent;color:white;transform:scale(1.15);box-shadow:0 4px 16px rgba(201,107,150,0.4)}
+.quiz-nav{display:flex;justify-content:space-between;align-items:center;padding:20px 0 10px;animation:fadeUp 0.4s 0.15s ease both}
+
+/* DATE PICKER */
+.date-picker{animation:fadeUp 0.4s 0.1s ease both}
+.day-header-row{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:10px}
+.day-label{text-align:center;font-size:10px;letter-spacing:1px;color:var(--violet);font-weight:500;text-transform:uppercase}
+.week-row{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:6px}
+.day-cell{aspect-ratio:1;border-radius:10px;border:1px solid rgba(232,160,188,0.15);background:rgba(242,196,212,0.04);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s}
+.day-num{font-size:14px;font-weight:500;color:var(--blush);line-height:1}
+.day-mon{font-size:9px;color:var(--violet);margin-top:2px}
+.day-cell.today{border-color:rgba(247,168,196,0.4)}
+.day-cell.today .day-num{color:var(--accent)}
+.day-cell.selected{background:linear-gradient(135deg,#e8a0bc,#c96b96);border-color:transparent;box-shadow:0 4px 16px rgba(201,107,150,0.4);transform:scale(1.08)}
+.day-cell.selected .day-num,.day-cell.selected .day-mon{color:white}
+.week-label{font-size:10px;color:var(--violet);letter-spacing:1.5px;text-transform:uppercase;margin:14px 0 8px;font-weight:500}
+
+/* RESULTS */
+#results{padding-top:24px;gap:16px}
+.results-header{text-align:center;padding:16px 0 8px}
+.results-emoji{font-size:44px;display:block;margin-bottom:12px}
+.results-title{font-family:'Playfair Display',serif;font-style:italic;font-size:28px;color:var(--soft-white);line-height:1.2;margin-bottom:8px}
+.results-sub{font-size:13px;color:var(--violet);font-weight:300}
+.result-card{background:rgba(242,196,212,0.05);border:1px solid rgba(232,160,188,0.12);border-radius:16px;padding:18px 20px;animation:inkReveal 0.5s ease both}
+@keyframes inkReveal{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.card-category{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--mauve);font-weight:500;margin-bottom:6px}
+.card-q{font-size:12px;color:var(--violet);margin-bottom:8px;font-weight:300;line-height:1.5}
+.card-a{font-family:'Playfair Display',serif;font-size:17px;color:var(--soft-white);line-height:1.4}
+.results-cta{display:flex;flex-direction:column;gap:10px;align-items:center;padding-top:8px;padding-bottom:16px}
+
+/* LINK SHARE */
+#share-screen{align-items:center;justify-content:center;text-align:center;gap:22px}
+.share-title{font-family:'Playfair Display',serif;font-style:italic;font-size:30px;color:var(--soft-white);line-height:1.2}
+.share-sub{font-size:14px;color:var(--violet);font-weight:300;line-height:1.6;max-width:280px}
+.link-box{width:100%;background:rgba(242,196,212,0.07);border:1px solid rgba(232,160,188,0.2);border-radius:14px;padding:14px 16px;font-size:12px;color:var(--mauve);word-break:break-all;line-height:1.6;font-family:'DM Sans',sans-serif}
+.copy-confirm{font-size:13px;color:var(--accent);display:none;margin-top:-12px}
+.copy-confirm.visible{display:block}
+</style>
+</head>
+<body>
+<div class="stars" id="starsContainer"></div>
+<div class="app">
+
+  <!-- SPLASH: yes/no -->
+  <div class="screen active" id="splash">
+    <span class="heart-pulse">💕</span>
+    <p class="intro-eyebrow">A question for you</p>
+    <h1 class="intro-title">Do you want to go on a date with me?</h1>
+    <div class="yesno-wrap" id="yesnoWrap">
+      <button class="btn-primary" onclick="sayYes()" style="position:absolute;top:0">Yes 🥰</button>
+      <button class="btn-no" id="noBtn" onmouseover="runAway(event)" ontouchstart="runAway(event)">No</button>
+    </div>
+  </div>
+
+  <!-- INTRO: name entry -->
+  <div class="screen" id="intro">
+    <span class="heart-pulse" style="margin-top:auto">💕</span>
+    <p class="intro-eyebrow">Tonight's agenda</p>
+    <h1 class="intro-title">Let's plan the perfect date night</h1>
+    <p class="intro-sub">A few questions to make tonight feel exactly like us.</p>
+    <div class="name-input-wrap">
+      <input class="name-input" id="nameInput" type="text" placeholder="Your name, love..." autocomplete="off" oninput="clearNameError()" />
+      <p class="name-error" id="nameError">💕 This is just for you, Mal</p>
+    </div>
+    <button class="btn-primary" onclick="startQuiz()" style="align-self:center">Begin ✨</button>
+    <div style="margin-top:auto"></div>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="screen" id="quiz">
+    <div class="quiz-header">
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="quiz-meta">
+        <span class="q-count" id="qCount"></span>
+        <span class="q-category" id="qCategory"></span>
+      </div>
+    </div>
+    <div class="q-body" id="qBody"></div>
+    <div class="quiz-nav">
+      <button class="btn-ghost" id="backBtn" onclick="prevQuestion()">← Back</button>
+      <button class="btn-primary" id="nextBtn" onclick="nextQuestion()" style="width:auto;padding:14px 28px">Next →</button>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="screen" id="results">
+    <div class="results-header">
+      <span class="results-emoji">🌙</span>
+      <h2 class="results-title" id="resultsTitle">Here's our night</h2>
+      <p class="results-sub">Screenshot this and share it 💌</p>
+    </div>
+    <div id="resultCards"></div>
+    <div class="results-cta">
+      <button class="btn-primary" onclick="goToShare()" style="width:auto;padding:14px 28px">Share with babe 💌</button>
+      <button class="btn-ghost" onclick="restart()">Start over</button>
+    </div>
+  </div>
+
+  <!-- SHARE SCREEN -->
+  <div class="screen" id="share-screen">
+    <div style="margin-top:auto"></div>
+    <span style="font-size:44px;text-align:center">💌</span>
+    <h2 class="share-title">Send this link</h2>
+    <p class="share-sub">Copy the link below and send it to your babe. He can open it to see all your answers.</p>
+    <div class="link-box" id="shareLink">Generating link...</div>
+    <p class="copy-confirm" id="copyConfirm">✓ Copied to clipboard!</p>
+    <button class="btn-primary" onclick="copyLink()" style="align-self:center">Copy link</button>
+    <button class="btn-ghost" onclick="show('results')" style="align-self:center">← Back</button>
+    <div style="margin-top:auto"></div>
+  </div>
+
+  <!-- VIEWER SCREEN (for the boyfriend) -->
+  <div class="screen" id="viewer">
+    <div class="results-header">
+      <span class="results-emoji">💕</span>
+      <h2 class="results-title" id="viewerTitle">Her answers</h2>
+      <p class="results-sub" id="viewerSub"></p>
+    </div>
+    <div id="viewerCards"></div>
+    <div class="results-cta">
+      <button class="btn-primary" onclick="restart()" style="width:auto;padding:14px 28px">Plan another date 💕</button>
+    </div>
+  </div>
+
+</div>
+<script>
+// -- STARS (no template literals) --
+(function(){
+  try {
+    var container = document.getElementById('starsContainer');
+    var W = window.innerWidth, H = window.innerHeight;
+    for(var i = 0; i < 80; i++){
+      var x = Math.random() * W;
+      var y = Math.random() * H;
+      var r = Math.random() * 1.2 + 0.2;
+      var minO = (Math.random() * 0.2 + 0.05).toFixed(2);
+      var maxO = (parseFloat(minO) + Math.random() * 0.4 + 0.1).toFixed(2);
+      var dur = (Math.random() * 3 + 2).toFixed(1) + 's';
+      var d = document.createElement('div');
+      d.className = 'star';
+      d.style.left = x + 'px';
+      d.style.top = y + 'px';
+      d.style.width = (r * 2) + 'px';
+      d.style.height = (r * 2) + 'px';
+      d.style.setProperty('--dur', dur);
+      d.style.setProperty('--min-op', minO);
+      d.style.setProperty('--max-op', maxO);
+      container.appendChild(d);
+    }
+  } catch(e) {}
+})();
+
+// -- QUESTIONS --
+var questions = [
+  {category:'The vibe', q:'How are you feeling tonight?', hint:'Be honest 🌿', type:'choice',
+   options:[{icon:'✨',label:'Playful & flirty'},{icon:'🕯️',label:'Cozy & romantic'},{icon:'🌊',label:'Chill & carefree'},{icon:'🔥',label:'Excited & energetic'}]},
+  {category:'The vibe', q:'Where would you most want to end up tonight?', type:'choice',
+   options:[{icon:'🛋️',label:'Curled up at home'},{icon:'🌃',label:'Out in the city'},{icon:'🌿',label:'Somewhere outdoors'},{icon:'🎲',label:'Surprise me'}]},
+  {category:'Food & drinks', q:'What sounds most delicious right now?', type:'choice',
+   options:[{icon:'🍕',label:'Comfort food, no thinking'},{icon:'🍣',label:'Something a little fancy'},{icon:'🌮',label:'Casual & yummy'},{icon:'🍫',label:'Dessert-first energy'}]},
+  {category:'Food & drinks', q:'Drinks tonight?', type:'choice',
+   options:[{icon:'🍷',label:'Wine & candles'},{icon:'🍹',label:'Cocktails & good music'},{icon:'☕',label:'Tea or coffee — cozy mode'},{icon:'💧',label:'Just us, no drinks needed'}]},
+  {category:'Activities', q:'How active are we feeling?', type:'scale', labels:['Netflix & chill','Dance all night'], min:1, max:5},
+  {category:'Activities', q:'Pick an activity that sounds perfect tonight.', type:'choice',
+   options:[{icon:'🎬',label:'Movie or show'},{icon:'🎮',label:'Games together'},{icon:'🚶',label:'A late-night walk'},{icon:'🎨',label:'Something creative'}]},
+  {category:'Us', q:'One thing you want to talk about tonight?', hint:'Dreams, plans, memories — anything 💬', type:'text', placeholder:'Share whatever\'s on your heart...'},
+  {category:'Us', q:'What\'s one thing that would make tonight feel really special?', type:'text', placeholder:'Even something small counts...'},
+  {category:'Us', q:'How much do you love me tonight?', hint:'On a scale of 1 to 5 — choose wisely 😘', type:'scale', labels:['A little 😅','To the moon 🌙'], min:1, max:5},
+  {category:'The night', q:'How do you want tonight to end?', type:'choice',
+   options:[{icon:'💤',label:'Falling asleep together'},{icon:'💬',label:'Talking until it\'s late'},{icon:'🌟',label:'Something unexpected'},{icon:'💏',label:'Just close, no words needed'}]},
+  {category:'Planning ahead', q:'Pick a date night in the next 4 weeks 📅', hint:'Tap any day to claim it as ours', type:'datepicker'}
+];
+
+var current = 0;
+var answers = {};
+var userName = '';
+
+// -- SPLASH --
+function sayYes(){
+  show('intro');
+}
+
+function runAway(e){
+  try { e.preventDefault(); } catch(ex){}
+  var btn = document.getElementById('noBtn');
+  var wrap = document.getElementById('yesnoWrap');
+  var wW = wrap.offsetWidth;
+  var wH = wrap.offsetHeight;
+  var bW = btn.offsetWidth;
+  var bH = btn.offsetHeight;
+  var newLeft = Math.random() * (wW - bW);
+  var newTop = Math.random() * (wH - bH);
+  btn.style.left = newLeft + 'px';
+  btn.style.top = newTop + 'px';
+  var cur = parseFloat(window.getComputedStyle(btn).fontSize);
+  if(cur > 9) btn.style.fontSize = (cur - 1) + 'px';
+}
+
+// -- INTRO --
+function startQuiz(){
+  var n = document.getElementById('nameInput').value.trim();
+  var allowed = ['mal','mallory'];
+  if(allowed.indexOf(n.toLowerCase()) === -1){
+    var err = document.getElementById('nameError');
+    err.classList.add('visible');
+    document.getElementById('nameInput').style.borderColor = 'rgba(247,168,196,0.7)';
+    document.getElementById('nameInput').focus();
+    return;
+  }
+  userName = n.charAt(0).toUpperCase() + n.slice(1).toLowerCase();
+  show('quiz');
+  renderQuestion();
+}
+
+function clearNameError(){
+  document.getElementById('nameError').classList.remove('visible');
+  document.getElementById('nameInput').style.borderColor = '';
+}
+
+// -- SCREEN --
+function show(id){
+  var screens = document.querySelectorAll('.screen');
+  for(var i = 0; i < screens.length; i++) screens[i].classList.remove('active');
+  document.getElementById(id).classList.add('active');
+}
+
+// -- QUIZ --
+function renderQuestion(){
+  var q = questions[current];
+  var total = questions.length;
+  document.getElementById('progressFill').style.width = (((current + 1) / total) * 100) + '%';
+  document.getElementById('qCount').textContent = (current + 1) + ' of ' + total;
+  document.getElementById('qCategory').textContent = q.category;
+  var body = document.getElementById('qBody');
+  var saved = answers[current];
+  var html = '<h2 class="q-text">' + q.q + '</h2>';
+  if(q.hint) html += '<p class="q-hint">' + q.hint + '</p>';
+
+  if(q.type === 'choice'){
+    html += '<div class="choices">';
+    for(var i = 0; i < q.options.length; i++){
+      var o = q.options[i];
+      var sel = (saved === i) ? ' selected' : '';
+      html += '<button class="choice-btn' + sel + '" onclick="selectChoice(' + i + ')">';
+      html += '<span class="choice-icon">' + o.icon + '</span>' + o.label + '</button>';
+    }
+    html += '</div>';
+  } else if(q.type === 'text'){
+    var ph = q.placeholder || 'Type here...';
+    var val = saved || '';
+    html += '<textarea class="text-answer" id="textA" placeholder="' + ph + '" oninput="saveText()">' + val + '</textarea>';
+  } else if(q.type === 'scale'){
+    html += '<div class="scale-wrap"><div class="scale-labels"><span>' + q.labels[0] + '</span><span>' + q.labels[1] + '</span></div><div class="scale-dots">';
+    for(var v = q.min; v <= q.max; v++){
+      var sel2 = (saved == v) ? ' selected' : '';
+      html += '<div class="scale-dot' + sel2 + '" onclick="selectScale(' + v + ')">' + v + '</div>';
+    }
+    html += '</div></div>';
+  } else if(q.type === 'datepicker'){
+    html += buildDatePicker(saved);
+  }
+
+  body.innerHTML = html;
+  document.getElementById('backBtn').style.visibility = (current === 0) ? 'hidden' : 'visible';
+  document.getElementById('nextBtn').textContent = (current === total - 1) ? 'See results 🌙' : 'Next →';
+}
+
+function selectChoice(idx){
+  answers[current] = idx;
+  var btns = document.querySelectorAll('.choice-btn');
+  for(var i = 0; i < btns.length; i++) btns[i].classList.toggle('selected', i === idx);
+}
+
+function saveText(){
+  var el = document.getElementById('textA');
+  if(el) answers[current] = el.value;
+}
+
+function selectScale(val){
+  answers[current] = val;
+  var dots = document.querySelectorAll('.scale-dot');
+  for(var i = 0; i < dots.length; i++) dots[i].classList.toggle('selected', parseInt(dots[i].textContent) === val);
+}
+
+function nextQuestion(){
+  if(current < questions.length - 1){ current++; renderQuestion(); }
+  else { showResults(); }
+}
+
+function prevQuestion(){
+  if(current > 0){ current--; renderQuestion(); }
+}
+
+// -- DATE PICKER --
+var MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var DAYS_SHORT = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+var WEEK_LABELS = ['This week','Next week','In two weeks','In three weeks','In four weeks'];
+var DAYS_FULL = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+var MONTHS_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+function buildDatePicker(selected){
+  var today = new Date(2026, 5, 16);
+  var end = new Date(today); end.setDate(today.getDate() + 27);
+  var days = [];
+  var d = new Date(today);
+  while(d <= end){ days.push(new Date(d)); d.setDate(d.getDate() + 1); }
+  var weeks = [];
+  var week = [];
+  for(var p = 0; p < days[0].getDay(); p++) week.push(null);
+  for(var di = 0; di < days.length; di++){
+    if(week.length === 7){ weeks.push(week); week = []; }
+    week.push(days[di]);
+  }
+  while(week.length < 7) week.push(null);
+  weeks.push(week);
+
+  var html = '<div class="date-picker"><div class="day-header-row">';
+  for(var dl = 0; dl < DAYS_SHORT.length; dl++) html += '<div class="day-label">' + DAYS_SHORT[dl] + '</div>';
+  html += '</div>';
+
+  for(var wi = 0; wi < weeks.length; wi++){
+    var wk = weeks[wi];
+    var hasDay = false;
+    for(var xi = 0; xi < wk.length; xi++) if(wk[xi]) hasDay = true;
+    if(!hasDay) continue;
+    html += '<p class="week-label">' + (WEEK_LABELS[wi] || '') + '</p><div class="week-row">';
+    for(var ci = 0; ci < wk.length; ci++){
+      var day = wk[ci];
+      if(!day){ html += '<div></div>'; continue; }
+      var iso = day.getFullYear() + '-' + String(day.getMonth()+1).padStart(2,'0') + '-' + String(day.getDate()).padStart(2,'0');
+      var isToday = (iso === '2026-06-16');
+      var isSel = (selected === iso);
+      var cls = 'day-cell' + (isToday ? ' today' : '') + (isSel ? ' selected' : '');
+      html += '<div class="' + cls + '" onclick="selectDate(\'' + iso + '\')">';
+      html += '<span class="day-num">' + day.getDate() + '</span>';
+      html += '<span class="day-mon">' + MONTHS_SHORT[day.getMonth()] + '</span></div>';
+    }
+    html += '</div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function selectDate(iso){
+  answers[current] = iso;
+  var cells = document.querySelectorAll('.day-cell');
+  for(var i = 0; i < cells.length; i++){
+    var onclick = cells[i].getAttribute('onclick');
+    cells[i].classList.toggle('selected', onclick === "selectDate('" + iso + "')");
+  }
+}
+
+function formatDate(iso){
+  var parts = iso.split('-');
+  var dt = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+  return DAYS_FULL[dt.getDay()] + ', ' + MONTHS_FULL[dt.getMonth()] + ' ' + dt.getDate();
+}
+
+// -- RESULTS --
+function getAnswerText(idx){
+  var q = questions[idx];
+  var a = answers[idx];
+  if(a === undefined || a === '') return null;
+  if(q.type === 'choice') return q.options[a] ? q.options[a].icon + ' ' + q.options[a].label : null;
+  if(q.type === 'scale') return a + ' / ' + q.max + (q.q.indexOf('love') !== -1 ? ' 💕' : '');
+  if(q.type === 'datepicker') return a ? '📅 ' + formatDate(a) : null;
+  return a;
+}
+
+function showResults(){
+  document.getElementById('resultsTitle').textContent = 'Here\'s our night, ' + userName;
+  var cards = document.getElementById('resultCards');
+  var html = '';
+  for(var i = 0; i < questions.length; i++){
+    var a = getAnswerText(i);
+    if(!a) continue;
+    html += '<div class="result-card" style="animation-delay:' + (i * 0.06) + 's">';
+    html += '<p class="card-category">' + questions[i].category + '</p>';
+    html += '<p class="card-q">' + questions[i].q + '</p>';
+    html += '<p class="card-a">' + a + '</p></div>';
+  }
+  cards.innerHTML = html;
+  show('results');
+}
+
+// -- SHARE --
+function goToShare(){
+  // Encode answers into URL hash so boyfriend can open the link and see results
+  var payload = {name: userName, answers: answers};
+  var encoded = btoa(encodeURIComponent(JSON.stringify(payload)));
+  var url = window.location.href.split('#')[0] + '#view=' + encoded;
+  document.getElementById('shareLink').textContent = url;
+  show('share-screen');
+}
+
+function copyLink(){
+  var link = document.getElementById('shareLink').textContent;
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(link).then(function(){
+      showCopyConfirm();
+    }).catch(function(){
+      fallbackCopy(link);
+    });
+  } else {
+    fallbackCopy(link);
+  }
+}
+
+function fallbackCopy(text){
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.focus(); ta.select();
+  try { document.execCommand('copy'); showCopyConfirm(); } catch(e){}
+  document.body.removeChild(ta);
+}
+
+function showCopyConfirm(){
+  var el = document.getElementById('copyConfirm');
+  el.classList.add('visible');
+  setTimeout(function(){ el.classList.remove('visible'); }, 2500);
+}
+
+// -- VIEWER MODE (boyfriend opens the link) --
+function checkViewMode(){
+  var hash = window.location.hash;
+  if(hash && hash.indexOf('#view=') === 0){
+    try {
+      var encoded = hash.slice(6);
+      var payload = JSON.parse(decodeURIComponent(atob(encoded)));
+      userName = payload.name || 'her';
+      answers = payload.answers || {};
+      showViewer();
+    } catch(e) {}
+  }
+}
+
+function showViewer(){
+  document.getElementById('viewerTitle').textContent = userName + '\'s answers 💕';
+  document.getElementById('viewerSub').textContent = 'Here\'s what she said...';
+  var cards = document.getElementById('viewerCards');
+  var html = '';
+  for(var i = 0; i < questions.length; i++){
+    var a = getAnswerText(i);
+    if(!a) continue;
+    html += '<div class="result-card" style="animation-delay:' + (i * 0.07) + 's">';
+    html += '<p class="card-category">' + questions[i].category + '</p>';
+    html += '<p class="card-q">' + questions[i].q + '</p>';
+    html += '<p class="card-a">' + a + '</p></div>';
+  }
+  cards.innerHTML = html;
+  show('viewer');
+}
+
+function restart(){
+  current = 0;
+  answers = {};
+  userName = '';
+  document.getElementById('nameInput').value = '';
+  window.location.hash = '';
+  show('splash');
+}
+
+// -- INIT --
+checkViewMode();
+</script>
+</body>
+</html>
